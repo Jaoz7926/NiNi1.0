@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>炫言 & 安妮的可爾必思特調吧 🍹</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --calpis-blue: #003087;
+      --calpis-deep: #001f5b;
+      --calpis-cyan: #0098d8;
+      --ocean-lagoon: #38bdf8;
+      --white-sand: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --accent-pink: #ff6b9d;
+      --accent-gold: #ffbe0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: linear-gradient(180deg, #0284c7 0%, #38bdf8 35%, #bae6fd 70%, #f0fdfa 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #1e293b;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 可爾必思經典白波點背景動效 */
+    .calpis-dots {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(circle, rgba(255, 255, 255, 0.45) 12%, transparent 13%),
+        radial-gradient(circle, rgba(255, 255, 255, 0.3) 18%, transparent 19%);
+      background-size: 70px 70px, 110px 110px;
+      background-position: 0 0, 35px 35px;
+      opacity: 0.8;
+      z-index: 1;
+    }
+
+    /* 浮動微氣泡動態 */
+    .bubble-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -40px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.35));
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 50%;
+      animation: floatUp 8s infinite linear;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.8); opacity: 0; }
+      15% { opacity: 0.85; }
+      90% { opacity: 0.85; }
+      100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+    }
+
+    /* 主手機構裝容器 */
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 25px 60px rgba(0, 48, 135, 0.25);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 10;
+      padding: 18px 18px 30px;
+    }
+
+    /* 頂部 Header 欄位 */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 8px 14px;
+      box-shadow: 0 4px 16px rgba(0, 48, 135, 0.12);
+      border: 2px solid #bae6fd;
+    }
+
+    .header-title {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: var(--calpis-blue);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sound-toggle-btn {
+      background: #e0f2fe;
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: var(--calpis-blue);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 進度進程指示器 */
+    .progress-bar-wrap {
+      margin: 14px 4px 10px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 20px;
+      height: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #ff6b9d);
+      border-radius: 20px;
+      transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* 主要卡片區域 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      border-radius: 28px;
+      padding: 22px 18px;
+      width: 100%;
+      box-shadow: 0 16px 36px rgba(0, 48, 135, 0.15);
+      border: 3px solid #ffffff;
+      text-align: center;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* 歡迎開場畫面裝飾 */
+    .hero-badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: var(--calpis-blue);
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      border: 1px solid #7dd3fc;
+    }
+
+    .hero-title {
+      font-family: 'Mochiy Pop One', cursive;
+      font-size: 21px;
+      color: var(--calpis-blue);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    /* 關卡提問文字 */
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #0284c7, #003087);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .question-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    /* 選項清單按鈕樣式 */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .option-card-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-card-btn:active {
+      transform: scale(0.97);
+    }
+
+    .option-card-btn:hover {
+      border-color: #38bdf8;
+      background: #f0f9ff;
+    }
+
+    .option-card-btn.selected {
+      border-color: var(--accent-pink);
+      background: #fff1f5;
+      box-shadow: 0 6px 16px rgba(255, 107, 157, 0.25);
+    }
+
+    .option-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .option-text-wrap {
+      flex: 1;
+    }
+
+    .option-main-text {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1.35;
+      margin-bottom: 2px;
+    }
+
+    .option-sub-desc {
+      font-size: 11.5px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* 倒數搖晃混和畫面 (Shake Layer) */
+    .shaker-container {
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .shaker-cup-preview {
+      width: 140px;
+      height: 200px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .shake-anim {
+      animation: vigorousShake 0.45s infinite;
+    }
+
+    @keyframes vigorousShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-8px, -4px) rotate(-6deg); }
+      40% { transform: translate(7px, 6px) rotate(5deg); }
+      60% { transform: translate(-6px, 3px) rotate(-4deg); }
+      80% { transform: translate(5px, -5px) rotate(3deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    .energy-bar-wrap {
+      width: 85%;
+      height: 14px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 12px 0 6px;
+      border: 2px solid white;
+    }
+
+    .energy-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #ff6b9d, #ffbe0b);
+      border-radius: 10px;
+      transition: width 0.15s ease-out;
+    }
+
+    /* 成果結算：可爾必思特調大杯子展示區 */
+    .result-glass-card {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 20px 16px 24px;
+      box-shadow: 0 20px 45px rgba(0, 48, 135, 0.2);
+      border: 3px solid #e0f2fe;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .special-cup-display {
+      width: 100%;
+      height: 280px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      margin: 8px 0 16px;
+    }
+
+    .drink-recipe-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--calpis-blue);
+      background: #e0f2fe;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .drink-main-name {
+      font-family: 'Mochiy Pop One', cursive;
+      font-size: 19px;
+      color: #0f172a;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .tasting-notes-box {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #334155;
+      border: 1px dashed #cbd5e1;
+      margin-bottom: 16px;
+    }
+
+    .seal-stamp {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 76px;
+      height: 76px;
+      border: 3px dashed #ef4444;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ef4444;
+      font-weight: 900;
+      font-size: 11px;
+      line-height: 1.2;
+      transform: rotate(-14deg);
+      opacity: 0.9;
+      pointer-events: none;
+      background: rgba(254, 242, 242, 0.4);
+    }
+
+    /* 按鈕大全 */
+    .cta-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7 0%, var(--calpis-blue) 100%);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(0, 48, 135, 0.3);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      margin-top: 12px;
+    }
+
+    .cta-btn:active {
+      transform: scale(0.97);
+    }
+
+    .cta-btn.line-btn {
+      background: #06c755;
+      box-shadow: 0 8px 20px rgba(6, 199, 85, 0.35);
+      margin-top: 8px;
+    }
+
+    .cta-btn.restart-btn {
+      background: #f1f5f9;
+      color: #475569;
+      box-shadow: none;
+      margin-top: 6px;
+      font-size: 13.5px;
+      padding: 10px;
+    }
+
+    /* 右下角林小妮彩蛋按鈕與彈窗 */
+    .easter-egg-float {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 100;
+    }
+
+    .baby-egg-btn {
+      background: rgba(255, 255, 255, 0.94);
+      border: 2px solid #fbcfe8;
+      border-radius: 50px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #db2777;
+      box-shadow: 0 4px 16px rgba(219, 39, 119, 0.22);
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s;
+    }
+
+    .baby-egg-btn:active {
+      transform: scale(0.92);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 15, 45, 0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-dialog {
+      background: white;
+      border-radius: 28px;
+      width: 100%;
+      max-width: 360px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+      border: 3px solid #fbcfe8;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-title {
+      font-family: 'Mochiy Pop One', cursive;
+      font-size: 17px;
+      color: #be185d;
+      margin: 8px 0;
+    }
+
+    .modal-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #334155;
+      text-align: left;
+      background: #fdf2f8;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin: 12px 0 16px;
+      border: 1px dashed #f472b6;
+    }
+
+    /* 複製成功浮動 Toast */
+    .toast-msg {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.92);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 可爾必思經典波點與浮動氣泡 -->
+  <div class="calpis-dots"></div>
+  <div class="bubble-layer" id="bubbleLayer"></div>
+
+  <!-- 主要視窗卡片 -->
+  <div class="app-viewport">
+    
+    <!-- 頂部資訊列 -->
+    <header class="header-bar">
+      <div class="header-title">
+        <span>🍹</span>
+        <span>炫言 & 安妮的特調吧</span>
+      </div>
+      <button class="sound-toggle-btn" id="soundBtn" onclick="toggleAudio()" title="開關音效">🔊</button>
+    </header>
+
+    <!-- 進度條 -->
+    <div class="progress-bar-wrap" id="progressBarWrap" style="display: none;">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- 核心動態內容區域 -->
+    <main class="main-content" id="stageContainer">
+      <!-- 畫面由 JavaScript 即時動態切換渲染 -->
+    </main>
+
+  </div>
+
+  <!-- 右下角林小妮專屬保留席彩蛋 -->
+  <div class="easter-egg-float">
+    <button class="baby-egg-btn" onclick="openEasterEgg()">
+      <span>🍼</span>
+      <span>林小妮保留席</span>
+    </button>
+  </div>
+
+  <!-- 林小妮彩蛋 Modal -->
+  <div class="modal-overlay" id="easterEggModal" onclick="closeEasterEgg(event)">
+    <div class="modal-dialog" onclick="event.stopPropagation()">
+      <div style="font-size: 38px;">🍼🐣</div>
+      <h3 class="modal-title">林小妮的未來專屬保留席</h3>
+      <div class="modal-text">
+        <p><strong>📢 安妮媽媽請勿吃醋！</strong></p>
+        <p style="margin-top: 4px;">特調吧台第一榮譽最高 VIP 老闆娘<strong>永遠只有林安妮大人</strong>！💖</p>
+        <p style="margin-top: 6px;">未來小妮出生後只負責喝純牛奶，換尿布、泡奶粉全由炫言一人包辦！安妮這輩子專心享受特調與被寵愛就好～🥰</p>
+      </div>
+      <button class="cta-btn" onclick="closeEasterEgg()" style="background: #db2777;">安妮媽媽審核通過 😤💖</button>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div class="toast-msg" id="toastMsg">
+    <span>✨</span>
+    <span id="toastText">已成功複製到剪貼簿！</span>
+  </div>
+
+  <script>
+    /* 音效合成晶片 (Web Audio API) */
+    let audioCtx = null;
+    let isSoundOn = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      isSoundOn = !isSoundOn;
+      document.getElementById('soundBtn').textContent = isSoundOn ? '🔊' : '🔇';
+    }
+
+    function playTone(freq, type, duration, delay = 0) {
+      if (!isSoundOn) return;
+      initAudio();
+      setTimeout(() => {
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+      }, delay);
+    }
+
+    function playBubbleSound() {
+      playTone(520, 'sine', 0.12);
+      playTone(740, 'triangle', 0.15, 60);
+      playTone(980, 'sine', 0.2, 120);
+    }
+
+    function playSuccessChime() {
+      playTone(523.25, 'triangle', 0.2, 0);   // C5
+      playTone(659.25, 'triangle', 0.2, 80);  // E5
+      playTone(783.99, 'triangle', 0.2, 160); // G5
+      playTone(1046.50, 'sine', 0.35, 240);  // C6
+    }
+
+    /* 氣泡背景生成 */
+    function createBubbles() {
+      const container = document.getElementById('bubbleLayer');
+      for (let i = 0; i < 18; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const size = Math.random() * 24 + 10;
+        b.style.width = size + 'px';
+        b.style.height = size + 'px';
+        b.style.left = Math.random() * 100 + '%';
+        b.style.animationDelay = (Math.random() * 6) + 's';
+        b.style.animationDuration = (Math.random() * 5 + 6) + 's';
+        container.appendChild(b);
+      }
+    }
+    createBubbles();
+
+    /* 6 大關卡定義與選項對照表 */
+    const questions = [
+      {
+        step: 1,
+        title: "想和炫言一起去哪裡冒險？",
+        subtitle: "選擇這杯特調的浪漫基底色",
+        options: [
+          { id: 'beach', icon: '🌊', label: '一起去海邊吹風踏浪', desc: '湛藍海洋可爾必思基底' },
+          { id: 'stars', icon: '🌌', label: '一起去山上看滿天星星', desc: '銀河星空可爾必思基底' },
+          { id: 'diving', icon: '🤿', label: '一起手牽手去潛水看魚', desc: '深海清涼可爾必思基底' }
+        ]
+      },
+      {
+        step: 2,
+        title: "這杯飲料的甜度冰塊來源？",
+        subtitle: "炫言最容易讓安妮心動的舉動",
+        options: [
+          { id: 'pat', icon: '🤏', label: '突然摸摸頭或捏捏臉', desc: '微糖微冰（粉紅碎冰微光）' },
+          { id: 'hold', icon: '🫂', label: '走路時手握得超緊不放', desc: '半糖少冰（立體厚冰安全感）' },
+          { id: 'smile', icon: '🧸', label: '一臉寵溺看著安妮傻笑', desc: '全糖微融（滿杯濃郁愛心波紋）' }
+        ]
+      },
+      {
+        step: 3,
+        title: "最讓人一口上癮的關鍵果香？",
+        subtitle: "安妮最具殺傷力的迷人特質",
+        options: [
+          { id: 'peach', icon: '✨', label: '妮妮融化人的甜甜笑容', desc: '注入爆汁水蜜桃果肉' },
+          { id: 'berry', icon: '🍓', label: '傲嬌又可愛的吃醋小表情', desc: '注入鮮紅酸甜野莓切片' },
+          { id: 'lemon', icon: '🍯', label: '撒嬌說想男友時的軟萌語氣', desc: '注入香檸蜜糖金黃果汁' }
+        ]
+      },
+      {
+        step: 4,
+        title: "安妮沒電累累時的充電祕方？",
+        subtitle: "杯底不可或缺的嚼勁靈魂配料",
+        options: [
+          { id: 'boba', icon: '🧋', label: '奶綠小珍珠 珍波椰', desc: '杯底沉澱滿滿黑糖小珍珠＋椰果' },
+          { id: 'mochi', icon: '📱', label: '連線開麥陪安妮講話到睡著', desc: '杯底堆滿軟糯白玉小麻糬球' },
+          { id: 'crystal', icon: '👑', label: '無條件聽話模式，安妮說的算', desc: '杯底沉澱爆汁水晶晶球' }
+        ]
+      },
+      {
+        step: 5,
+        title: "特調最重要的獨家認證封條？",
+        subtitle: "安妮平時最霸氣的私房金句",
+        options: [
+          { id: 'first_time', icon: '👑', label: '「炫言的第一次都要是我的！」', desc: '蓋上雪白厚奶蓋＋撒上金箔' },
+          { id: 'locked_key', icon: '🔐', label: '「炫言這輩子跟我鎖死了！鑰匙我直接吞掉！」', desc: '扣上粉紅愛心鎖頭鋼印封條' },
+          { id: 'baby_first', icon: '🍼', label: '「小妮出生前，安妮永遠是家裡最大寶貝！」', desc: '頂部插上軟綿綿愛心棉花糖雲' }
+        ]
+      },
+      {
+        step: 6,
+        title: "調配完成！這杯特調誰要負責喝完？",
+        subtitle: "全世界僅此一杯的終極誓約封杯",
+        options: [
+          { id: 'annie_lock', icon: '🔒', label: '妮妮親自宣判：林炫言已經被我強制鎖死，這輩子只能跟我一起喝！', desc: '粉金雙色吸管＋妮妮專屬認證章' },
+          { id: 'xuan_surrender', icon: '💖', label: '林炫言自願放棄抵抗：鑰匙已被丟進海裡，心甘情願被安妮鎖一輩子！', desc: '深海湛藍吸管＋此生鎖定專屬標牌' },
+          { id: 'both_sip', icon: '👩‍❤️‍‍👨', label: '安妮跟炫言一人吸管一口，兩根吸管一起喝一輩子！', desc: '雙人交叉愛心吸管＋同心紅線結' }
+        ]
+      }
+    ];
+
+    /* 使用者選擇記錄 */
+    let currentStep = 0; // 0: 歡迎頁, 1-6: 題目, 7: 搖晃混和, 8: 成果
+    let userChoices = {};
+    let shakeCount = 0;
+    const targetShakes = 6;
+
+    const container = document.getElementById('stageContainer');
+    const progressBarWrap = document.getElementById('progressBarWrap');
+    const progressFill = document.getElementById('progressFill');
+
+    /* 渲染歡迎頁面 */
+    function renderWelcome() {
+      progressBarWrap.style.display = 'none';
+      container.innerHTML = `
+        <div class="glass-card">
+          <div class="hero-badge">💙 炫言 & 安妮專屬限定</div>
+          <h1 class="hero-title">可爾必思特調吧</h1>
+          <p class="hero-subtitle">六道靈魂默契調配<br>為安妮特調一杯世界上唯一的專屬滋味 🍹</p>
+
+          <!-- 可愛可爾必思小狗插圖 -->
+          <div style="width: 140px; height: 140px; margin: 0 auto 16px;">
+            ${renderCutePuppySvg()}
+          </div>
+
+          <button class="cta-btn" onclick="startQuiz()">
+            <span>開始調配專屬特調</span>
+            <span>✨</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function renderCutePuppySvg() {
+      return `
+        <svg viewBox="0 0 160 160" width="100%" height="100%">
+          <defs>
+            <radialGradient id="pupGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#bae6fd" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="80" cy="80" r="72" fill="url(#pupGlow)"/>
+          <!-- 狗身軀與軟呼呼爪子 -->
+          <ellipse cx="80" cy="115" rx="38" ry="30" fill="#f8fafc" stroke="#334155" stroke-width="3"/>
+          <ellipse cx="64" cy="118" rx="12" ry="9" fill="#ffffff" stroke="#334155" stroke-width="2.5"/>
+          <ellipse cx="96" cy="118" rx="12" ry="9" fill="#ffffff" stroke="#334155" stroke-width="2.5"/>
+          <!-- 狗耳朵 -->
+          <path d="M42,52 C30,68 32,96 46,98 C54,100 56,76 50,56 Z" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+          <path d="M118,52 C130,68 128,96 114,98 C106,100 104,76 110,56 Z" fill="#94a3b8" stroke="#334155" stroke-width="3"/>
+          <!-- 狗頭部 -->
+          <ellipse cx="80" cy="74" rx="42" ry="38" fill="#ffffff" stroke="#334155" stroke-width="3.2"/>
+          <!-- 灰色額頭花紋斑塊 -->
+          <path d="M52,55 Q80,72 108,55 Q80,44 52,55 Z" fill="#cbd5e1" opacity="0.6"/>
+          <!-- 水汪汪大眼 -->
+          <ellipse cx="66" cy="72" rx="6.5" ry="8" fill="#1e293b"/>
+          <circle cx="68.5" cy="69" r="2.8" fill="#ffffff"/>
+          <circle cx="64.5" cy="75" r="1.2" fill="#ffffff"/>
+          <ellipse cx="94" cy="72" rx="6.5" ry="8" fill="#1e293b"/>
+          <circle cx="96.5" cy="69" r="2.8" fill="#ffffff"/>
+          <circle cx="92.5" cy="75" r="1.2" fill="#ffffff"/>
+          <!-- 害羞腮紅 -->
+          <ellipse cx="57" cy="80" rx="6" ry="4" fill="#ffb4d6" opacity="0.7"/>
+          <ellipse cx="103" cy="80" rx="6" ry="4" fill="#ffb4d6" opacity="0.7"/>
+          <!-- 鼻子與微笑嘴巴 -->
+          <path d="M76,80 Q80,77 84,80 Q80,85 76,80 Z" fill="#334155"/>
+          <path d="M75,85 Q80,88 85,85" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- 胸前拜託求饒肉球雙爪 -->
+          <ellipse cx="73" cy="100" rx="8" ry="7" fill="#ffffff" stroke="#334155" stroke-width="2.5"/>
+          <circle cx="73" cy="100" r="3" fill="#ff6b9d"/>
+          <ellipse cx="87" cy="100" rx="8" ry="7" fill="#ffffff" stroke="#334155" stroke-width="2.5"/>
+          <circle cx="87" cy="100" r="3" fill="#ff6b9d"/>
+        </svg>
+      `;
+    }
+
+    function startQuiz() {
+      initAudio();
+      playBubbleSound();
+      currentStep = 1;
+      renderQuestion();
+    }
+
+    /* 渲染關卡題目 */
+    function renderQuestion() {
+      const q = questions[currentStep - 1];
+      progressBarWrap.style.display = 'block';
+      const pct = ((currentStep - 1) / questions.length) * 100;
+      progressFill.style.width = pct + '%';
+
+      let optionsHtml = q.options.map(opt => `
+        <button class="option-card-btn" onclick="selectOption('${q.step}', '${opt.id}')">
+          <div class="option-icon-box">${opt.icon}</div>
+          <div class="option-text-wrap">
+            <div class="option-main-text">${opt.label}</div>
+            <div class="option-sub-desc">${opt.desc}</div>
+          </div>
+        </button>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="glass-card">
+          <div class="step-tag">
+            <span>STEP 0${q.step}</span>
+            <span>/ 06</span>
+          </div>
+          <h2 class="question-title">${q.title}</h2>
+          <div class="options-grid">
+            ${optionsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function selectOption(step, choiceId) {
+      userChoices['step' + step] = choiceId;
+      playBubbleSound();
+
+      if (currentStep < questions.length) {
+        currentStep++;
+        renderQuestion();
+      } else {
+        // 完成六題，進入搖晃混和階段
+        renderShakerStage();
+      }
+    }
+
+    /* 渲染搖一搖混和畫面 */
+    function renderShakerStage() {
+      progressFill.style.width = '100%';
+      shakeCount = 0;
+
+      container.innerHTML = `
+        <div class="glass-card">
+          <div class="hero-badge">🫧 配料已就位</div>
+          <h2 class="question-title" style="margin-bottom: 6px;">搖晃特調！讓心意完美融合</h2>
+          <p class="hero-subtitle">快速點擊杯子或猛力搖勻～（剩餘 <span id="shakeLeftText" style="color:var(--accent-pink); font-weight:900;">${targetShakes}</span> 次）</p>
+
+          <div class="shaker-container">
+            <div class="shaker-cup-preview" id="shakerCup" onclick="triggerShake()">
+              ${renderMiniPreviewCup()}
+            </div>
+
+            <div class="energy-bar-wrap">
+              <div class="energy-fill" id="energyFill"></div>
+            </div>
+          </div>
+
+          <button class="cta-btn" onclick="triggerShake()" style="margin-top: 8px;">
+            <span>👋 幫安妮用力搖一搖！</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function renderMiniPreviewCup() {
+      return `
+        <svg viewBox="0 0 100 150" width="100%" height="100%">
+          <defs>
+            <linearGradient id="miniLiquid" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#7dd3fc"/>
+              <stop offset="100%" stop-color="#0284c7"/>
+            </linearGradient>
+          </defs>
+          <path d="M22,35 L30,135 Q50,144 70,135 L78,35 Z" fill="url(#miniLiquid)" stroke="#003087" stroke-width="3"/>
+          <ellipse cx="50" cy="35" rx="28" ry="8" fill="#ffffff" stroke="#003087" stroke-width="2.5"/>
+          <ellipse cx="50" cy="35" rx="26" ry="6" fill="#e0f2fe"/>
+          <line x1="50" y1="20" x2="62" y2="90" stroke="#ff6b9d" stroke-width="4.5" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    function triggerShake() {
+      shakeCount++;
+      playTone(320 + shakeCount * 70, 'triangle', 0.12);
+      
+      const cup = document.getElementById('shakerCup');
+      cup.classList.add('shake-anim');
+      setTimeout(() => cup.classList.remove('shake-anim'), 300);
+
+      const pct = Math.min((shakeCount / targetShakes) * 100, 100);
+      document.getElementById('energyFill').style.width = pct + '%';
+      document.getElementById('shakeLeftText').textContent = Math.max(targetShakes - shakeCount, 0);
+
+      if (shakeCount >= targetShakes) {
+        playSuccessChime();
+        setTimeout(renderResultStage, 400);
+      }
+    }
+
+    /* 成果計算與命名邏輯 */
+    function getDrinkDetails() {
+      const c = userChoices;
+
+      // 1. 基底名稱
+      let baseName = "海風晶澈";
+      if (c.step1 === 'stars') baseName = "極光星河";
+      if (c.step1 === 'diving') baseName = "深海蔚藍";
+
+      // 2. 風味名稱
+      let fruitName = "白桃蜜露";
+      if (c.step3 === 'berry') fruitName = "野莓酸甜";
+      if (c.step3 === 'lemon') fruitName = "香檸蜜糖";
+
+      // 3. 配料名稱
+      let toppingName = "波波珍珠";
+      if (c.step4 === 'mochi') toppingName = "白玉麻糬";
+      if (c.step4 === 'crystal') toppingName = "水晶晶球";
+
+      // 4. 封印封條
+      let sealTitle = "金箔誓約";
+      if (c.step5 === 'locked_key') sealTitle = "鎖死鋼印";
+      if (c.step5 === 'baby_first') sealTitle = "棉花糖寵愛";
+
+      const fullName = `${baseName}${fruitName} × ${sealTitle}特調`;
+
+      // 專屬風味講評
+      let notes = [];
+      notes.push(`🌊 <strong>冒險基底：</strong>${c.step1 === 'beach' ? '蔚藍海風踏浪，海鷗與海鹽乳酸完美交融。' : c.step1 === 'stars' ? '滿天繁星下的靜謐陪伴，甘甜深邃。' : '手牽手潛入蔚藍深海，清爽無比。'}`);
+      notes.push(`🍬 <strong>心動甜度：</strong>${c.step2 === 'pat' ? '摸摸頭捏臉蛋的傲嬌微甜' : c.step2 === 'hold' ? '十指緊扣永不放開的扎實安全感' : '全糖濃度融化，眼裡只有妳的寵溺'}`);
+      notes.push(`🍓 <strong>靈魂果香：</strong>${c.step3 === 'peach' ? '妮妮融化人的甜甜笑容，一口就心跳加速' : c.step3 === 'berry' ? '可愛吃醋小嘴微翹的極致酸甜' : '軟萌撒嬌說想男友時的濃郁蜜香'}`);
+      notes.push(`🧋 <strong>滿電配料：</strong>${c.step4 === 'boba' ? '奶綠小珍珠 珍波椰，咬一口滿血復活！' : c.step4 === 'mochi' ? '語音開麥掛睡軟糯白玉麻糬，安心入眠' : '無條件聽話無敵水晶球，安妮永遠最大'}`);
+      notes.push(`👑 <strong>霸氣認證：</strong>${c.step5 === 'first_time' ? '已登記：林炫言的所有第一次全被安妮包辦！' : c.step5 === 'locked_key' ? '已登記：炫言整個人與安妮永遠鎖死，鑰匙已吞！' : '已登記：小妮出生前，安妮永遠是家裡最大寶貝！'}`);
+
+      // 誓約吸管宣告
+      let oathDesc = "";
+      if (c.step6 === 'annie_lock') {
+        oathDesc = "妮妮親自宣判：林炫言已被強制鎖死，這輩子只能跟我一起喝！🔒";
+      } else if (c.step6 === 'xuan_surrender') {
+        oathDesc = "林炫言自願放棄抵抗：鑰匙已被丟進海裡，心甘情願被安妮鎖一輩子！💖";
+      } else {
+        oathDesc = "安妮跟炫言一人吸管一口，兩根吸管一起喝一輩子！👩‍❤️‍👨";
+      }
+
+      return { fullName, notes, oathDesc };
+    }
+
+    /* 渲染超精美動態生成的特調可爾必思杯身 (完全依據 6 個選項生成獨立 SVG 元素) */
+    function generateDynamicCupSvg() {
+      const c = userChoices;
+
+      // 1. 液體基底漸層色
+      let stopColorTop = "#bae6fd";
+      let stopColorMid = "#38bdf8";
+      let stopColorBot = "#0284c7";
+
+      if (c.step1 === 'stars') { // 星空
+        stopColorTop = "#c084fc";
+        stopColorMid = "#6366f1";
+        stopColorBot = "#1e1b4b";
+      } else if (c.step1 === 'diving') { // 潛水薄荷深海
+        stopColorTop = "#a7f3d0";
+        stopColorMid = "#2dd4bf";
+        stopColorBot = "#0f766e";
+      }
+
+      // 2. 冰塊與甜度波紋 (Step 2)
+      let iceCubesSvg = "";
+      if (c.step2 === 'pat') { // 碎冰微甜
+        iceCubesSvg = `
+          <polygon points="90,75 105,70 115,80 100,85" fill="rgba(255,255,255,0.7)" stroke="#ffffff" stroke-width="1.5"/>
+          <polygon points="135,70 148,65 155,75 142,80" fill="rgba(255,255,255,0.7)" stroke="#ffffff" stroke-width="1.5"/>
+          <circle cx="120" cy="80" r="3" fill="#ffb4d6"/>
+        `;
+      } else if (c.step2 === 'hold') { // 扎實大冰塊
+        iceCubesSvg = `
+          <rect x="85" y="70" width="30" height="26" rx="6" fill="rgba(255,255,255,0.8)" stroke="#ffffff" stroke-width="2"/>
+          <rect x="130" y="65" width="28" height="26" rx="6" fill="rgba(255,255,255,0.8)" stroke="#ffffff" stroke-width="2"/>
+          <line x1="88" y1="83" x2="112" y2="83" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+        `;
+      } else { // 全糖甜蜜融化波浪與閃光
+        iceCubesSvg = `
+          <path d="M80,75 Q120,68 160,75 Q120,82 80,75 Z" fill="#ffffff" opacity="0.9"/>
+          <circle cx="100" cy="78" r="2.5" fill="#f43f5e"/>
+          <circle cx="140" cy="74" r="2.5" fill="#f43f5e"/>
+          <path d="M120,70 L123,76 L129,76 L124,80 L126,86 L120,82 L114,86 L116,80 L111,76 L117,76 Z" fill="#fef08a"/>
+        `;
+      }
+
+      // 3. 水果果肉漂浮物 (Step 3)
+      let fruitSvg = "";
+      if (c.step3 === 'peach') { // 水蜜桃切片
+        fruitSvg = `
+          <g transform="translate(86, 95) rotate(-15)">
+            <path d="M0,15 C5,-5 25,-5 30,15 C30,30 15,36 0,15 Z" fill="#fecdd3" stroke="#f43f5e" stroke-width="1.8"/>
+            <circle cx="15" cy="15" r="4" fill="#fda4af"/>
+          </g>
+          <g transform="translate(130, 105) rotate(20)">
+            <path d="M0,12 C4,-4 20,-4 24,12 C24,24 12,28 0,12 Z" fill="#fecdd3" stroke="#f43f5e" stroke-width="1.8"/>
+          </g>
+        `;
+      } else if (c.step3 === 'berry') { // 鮮紅野莓草莓切片
+        fruitSvg = `
+          <g transform="translate(90, 100) rotate(15)">
+            <polygon points="12,0 24,20 0,20" fill="#ef4444" stroke="#b91c1c" stroke-width="1.5"/>
+            <circle cx="8" cy="14" r="1" fill="#fef08a"/>
+            <circle cx="15" cy="12" r="1" fill="#fef08a"/>
+          </g>
+          <circle cx="140" cy="108" r="7" fill="#dc2626" stroke="#991b1b" stroke-width="1.5"/>
+          <circle cx="150" cy="118" r="5" fill="#b91c1c"/>
+        `;
+      } else { // 蜂蜜檸檬切片
+        fruitSvg = `
+          <g transform="translate(92, 100) rotate(-25)">
+            <circle cx="15" cy="15" r="14" fill="#fef08a" stroke="#eab308" stroke-width="2"/>
+            <path d="M15,1 L15,29 M1,15 L29,15 M5,5 L25,25 M5,25 L25,5" stroke="#ca8a04" stroke-width="1.2"/>
+          </g>
+          <path d="M135,95 Q138,110 134,120" stroke="#f59e0b" stroke-width="3" fill="none" stroke-linecap="round"/>
+        `;
+      }
+
+      // 4. 杯底嚼勁配料 (Step 4)
+      let bottomToppingsSvg = "";
+      if (c.step4 === 'boba') { // 奶綠小珍珠 珍波椰 (珍珠 + 晶透椰果條)
+        bottomToppingsSvg = `
+          <!-- 滿滿黑糖波波 -->
+          <circle cx="95" cy="172" r="6" fill="#1c1917" stroke="#44403c" stroke-width="1.5"/>
+          <circle cx="110" cy="175" r="6" fill="#1c1917" stroke="#44403c" stroke-width="1.5"/>
+          <circle cx="125" cy="173" r="6" fill="#1c1917" stroke="#44403c" stroke-width="1.5"/>
+          <circle cx="140" cy="176" r="6" fill="#1c1917" stroke="#44403c" stroke-width="1.5"/>
+          <circle cx="152" cy="170" r="5.5" fill="#1c1917" stroke="#44403c" stroke-width="1.5"/>
+          <circle cx="102" cy="164" r="5.5" fill="#292524"/>
+          <circle cx="118" cy="162" r="6" fill="#292524"/>
+          <circle cx="134" cy="164" r="5.5" fill="#292524"/>
+          <!-- 晶亮椰果晶條 -->
+          <rect x="88" y="156" width="11" height="7" rx="2" fill="rgba(255,255,255,0.85)" stroke="#cbd5e1" transform="rotate(15, 88, 156)"/>
+          <rect x="120" y="150" width="12" height="7" rx="2" fill="rgba(255,255,255,0.85)" stroke="#cbd5e1" transform="rotate(-12, 120, 150)"/>
+          <rect x="144" y="155" width="11" height="6.5" rx="2" fill="rgba(255,255,255,0.85)" stroke="#cbd5e1" transform="rotate(8, 144, 155)"/>
+        `;
+      } else if (c.step4 === 'mochi') { // 白玉小麻糬
+        bottomToppingsSvg = `
+          <ellipse cx="98" cy="170" rx="9" ry="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8"/>
+          <ellipse cx="118" cy="172" rx="9" ry="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8"/>
+          <ellipse cx="138" cy="170" rx="9" ry="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8"/>
+          <ellipse cx="108" cy="160" rx="8" ry="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+          <ellipse cx="128" cy="159" rx="8" ry="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+          <circle cx="118" cy="172" r="2.5" fill="#ffb4d6"/>
+        `;
+      } else { // 爆汁水晶晶球
+        bottomToppingsSvg = `
+          <circle cx="96" cy="170" r="7" fill="rgba(255,255,255,0.5)" stroke="#67e8f9" stroke-width="2"/>
+          <circle cx="94" cy="168" r="2" fill="#ffffff"/>
+          <circle cx="115" cy="173" r="7.5" fill="rgba(255,255,255,0.5)" stroke="#67e8f9" stroke-width="2"/>
+          <circle cx="113" cy="170" r="2.5" fill="#ffffff"/>
+          <circle cx="135" cy="171" r="7" fill="rgba(255,255,255,0.5)" stroke="#67e8f9" stroke-width="2"/>
+          <circle cx="133" cy="168" r="2" fill="#ffffff"/>
+          <circle cx="149" cy="165" r="6" fill="rgba(255,255,255,0.5)" stroke="#67e8f9" stroke-width="2"/>
+          <circle cx="105" cy="160" r="6.5" fill="rgba(255,255,255,0.5)" stroke="#67e8f9" stroke-width="2"/>
+          <circle cx="125" cy="159" r="6.5" fill="rgba(255,255,255,0.5)" stroke="#67e8f9" stroke-width="2"/>
+        `;
+      }
+
+      // 5. 杯頂奶蓋與封條裝飾 (Step 5)
+      let topSealSvg = "";
+      if (c.step5 === 'first_time') { // 厚奶蓋 + 金箔
+        topSealSvg = `
+          <!-- 厚厚雪白奶蓋層 -->
+          <path d="M68,52 Q120,44 172,52 L172,62 Q120,70 68,62 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+          <!-- 閃亮金箔片 -->
+          <polygon points="95,50 100,53 97,57 93,54" fill="#fbbf24"/>
+          <polygon points="120,48 124,49 122,54 118,52" fill="#fbbf24"/>
+          <polygon points="142,51 146,54 143,57 139,55" fill="#fbbf24"/>
+          <!-- 小皇冠裝飾標章 -->
+          <path d="M112,40 L116,48 L124,42 L128,48 L132,40 L130,50 L114,50 Z" fill="#f59e0b" stroke="#b45309" stroke-width="1"/>
+        `;
+      } else if (c.step5 === 'locked_key') { // 愛心鎖頭鋼印封條
+        topSealSvg = `
+          <!-- 橫貫杯身的封印鎖鏈帶 -->
+          <rect x="70" y="52" width="100" height="9" rx="3" fill="#f43f5e" stroke="#881337" stroke-width="1.5"/>
+          <!-- 中央愛心鎖頭 -->
+          <circle cx="120" cy="50" r="6" fill="none" stroke="#be123c" stroke-width="2.5"/>
+          <rect x="113" y="52" width="14" height="13" rx="3" fill="#fb7185" stroke="#be123c" stroke-width="1.5"/>
+          <circle cx="120" cy="57" r="1.8" fill="#881337"/>
+          <line x1="120" y1="58" x2="120" y2="62" stroke="#881337" stroke-width="1.8"/>
+        `;
+      } else { // 棉花糖愛心雲
+        topSealSvg = `
+          <g transform="translate(100, 36)">
+            <ellipse cx="12" cy="14" rx="10" ry="7" fill="#ffffff" stroke="#fbcfe8" stroke-width="1.5"/>
+            <ellipse cx="26" cy="13" rx="11" ry="8" fill="#ffffff" stroke="#fbcfe8" stroke-width="1.5"/>
+            <ellipse cx="20" cy="8" rx="8" ry="6" fill="#fdf2f8"/>
+            <text x="14" y="16" font-size="11">💖</text>
+          </g>
+        `;
+      }
+
+      // 6. 吸管與認證掛牌 (Step 6)
+      let strawAndBadgeSvg = "";
+      if (c.step6 === 'annie_lock') { // 粉金雙色吸管 + 妮妮專屬徽章
+        strawAndBadgeSvg = `
+          <!-- 粗粉金吸管 -->
+          <line x1="135" y1="12" x2="115" y2="135" stroke="#f472b6" stroke-width="9" stroke-linecap="round"/>
+          <line x1="135" y1="12" x2="115" y2="135" stroke="#fde047" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="round"/>
+          <!-- 妮妮認證吊牌 -->
+          <rect x="140" y="24" width="46" height="20" rx="6" fill="#ec4899" stroke="#be185d" stroke-width="1.5"/>
+          <text x="145" y="38" font-size="10" font-weight="900" fill="#ffffff">妮妮鎖死</text>
+        `;
+      } else if (c.step6 === 'xuan_surrender') { // 深情藍吸管 + 炫言被鎖專屬吊牌
+        strawAndBadgeSvg = `
+          <!-- 炫言海軍藍吸管 -->
+          <line x1="108" y1="12" x2="124" y2="135" stroke="#0284c7" stroke-width="8.5" stroke-linecap="round"/>
+          <line x1="108" y1="12" x2="124" y2="135" stroke="#bae6fd" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round"/>
+          <!-- 此生被鎖掛牌 -->
+          <circle cx="94" cy="28" r="14" fill="#0369a1" stroke="#ffffff" stroke-width="2"/>
+          <text x="86" y="32" font-size="9" font-weight="900" fill="#ffffff">自願鎖</text>
+        `;
+      } else { // 雙人愛心交叉吸管 + 同心紅線結
+        strawAndBadgeSvg = `
+          <!-- 安妮粉紅吸管 -->
+          <line x1="100" y1="12" x2="130" y2="140" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+          <!-- 炫言天藍吸管 -->
+          <line x1="140" y1="12" x2="110" y2="140" stroke="#0ea5e9" stroke-width="6.5" stroke-linecap="round"/>
+          <!-- 交叉處同心紅結 -->
+          <circle cx="120" cy="30" r="7" fill="#ef4444"/>
+          <text x="114" y="34" font-size="10" fill="#ffffff">結</text>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 240 220" width="100%" height="100%">
+          <defs>
+            <!-- 動態漸層色 -->
+            <linearGradient id="cupLiquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="${stopColorTop}"/>
+              <stop offset="45%" stop-color="${stopColorMid}"/>
+              <stop offset="100%" stop-color="${stopColorBot}"/>
+            </linearGradient>
+            <!-- 玻璃反光質感 -->
+            <linearGradient id="glassReflection" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.45)"/>
+              <stop offset="25%" stop-color="rgba(255,255,255,0.05)"/>
+              <stop offset="85%" stop-color="rgba(255,255,255,0)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
+            </linearGradient>
+          </defs>
+
+          <!-- 1. 吸管層（最底後方） -->
+          ${strawAndBadgeSvg}
+
+          <!-- 2. 杯身外杯陰影 -->
+          <path d="M68,54 L82,185 Q120,198 158,185 L172,54 Z" fill="#e2e8f0" opacity="0.3"/>
+
+          <!-- 3. 液體本體 -->
+          <path d="M70,56 L84,182 Q120,194 156,182 L170,56 Z" fill="url(#cupLiquidGrad)" stroke="none"/>
+
+          <!-- 4. 可爾必思特有白色乳酸波紋與氣泡 -->
+          <circle cx="88" cy="120" r="3" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="145" cy="135" r="4.5" fill="rgba(255,255,255,0.7)"/>
+          <circle cx="112" cy="115" r="3.5" fill="rgba(255,255,255,0.8)"/>
+          <circle cx="132" cy="90" r="2.5" fill="rgba(255,255,255,0.9)"/>
+          <circle cx="100" cy="140" r="3" fill="rgba(255,255,255,0.75)"/>
+
+          <!-- 5. 嚼勁配料層 (Step 4) -->
+          ${bottomToppingsSvg}
+
+          <!-- 6. 果香漂浮物 (Step 3) -->
+          ${fruitSvg}
+
+          <!-- 7. 冰塊與甜度波浪 (Step 2) -->
+          ${iceCubesSvg}
+
+          <!-- 8. 杯身外層玻璃高光與輪廓 -->
+          <path d="M70,56 L84,182 Q120,194 156,182 L170,56 Z" fill="url(#glassReflection)" stroke="#003087" stroke-width="3"/>
+          <!-- 頂部杯口立體橢圓 -->
+          <ellipse cx="120" cy="56" rx="50" ry="10" fill="none" stroke="#003087" stroke-width="3"/>
+          <ellipse cx="120" cy="56" rx="47" ry="8" fill="rgba(255,255,255,0.6)"/>
+
+          <!-- 9. 杯頂封條奶蓋 (Step 5) -->
+          ${topSealSvg}
+        </svg>
+      `;
+    }
+
+    /* 渲染最終成果特調小卡 */
+    function renderResultStage() {
+      progressBarWrap.style.display = 'none';
+      const details = getDrinkDetails();
+
+      container.innerHTML = `
+        <div class="result-glass-card">
+          <!-- 認證防偽鋼印 -->
+          <div class="seal-stamp">
+            <span>林炫言</span>
+            <span>已被鎖死</span>
+            <span>永久有效</span>
+          </div>
+
+          <div class="drink-recipe-tag">🍹 安妮專屬・客製特調完成</div>
+          <h2 class="drink-main-name">${details.fullName}</h2>
+
+          <!-- 動態高顏值飲料杯 (每個細節均不同) -->
+          <div class="special-cup-display">
+            ${generateDynamicCupSvg()}
+          </div>
+
+          <!-- 風味細節評語 -->
+          <div class="tasting-notes-box">
+            ${details.notes.map(n => `<div style="margin-bottom: 4px;">${n}</div>`).join('')}
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #e2e8f0; color: #e11d48; font-weight: 800;">
+              ✨ 終極誓約：${details.oathDesc}
+            </div>
+          </div>
+
+          <!-- 一鍵傳送給炫言按鈕 -->
+          <button class="cta-btn line-btn" onclick="copyResultToLine()">
+            <span>📋 複製特調單回傳給炫言（LINE）</span>
+          </button>
+
+          <!-- 重新特調一次按鈕 -->
+          <button class="cta-btn restart-btn" onclick="restartBrew()">
+            <span>🔄 重新調配另一種口味</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function restartBrew() {
+      userChoices = {};
+      currentStep = 0;
+      renderWelcome();
+    }
+
+    /* 複製成果至剪貼簿傳 LINE */
+    function copyResultToLine() {
+      const details = getDrinkDetails();
+      const text = `🍹【炫言 & 安妮的可爾必思特調吧】🍹\n` +
+        `👑 專屬調配師：林安妮（妮妮）\n` +
+        `🥤 特調名稱：《${details.fullName}》\n\n` +
+        `📜 獨家配方紀錄：\n` +
+        `・浪漫冒險：${questions[0].options.find(o => o.id === userChoices.step1).label}\n` +
+        `・心動甜度：${questions[1].options.find(o => o.id === userChoices.step2).label}\n` +
+        `・靈魂果香：${questions[2].options.find(o => o.id === userChoices.step3).label}\n` +
+        `・嚼勁配料：${questions[3].options.find(o => o.id === userChoices.step4).label}\n` +
+        `・獨家封條：${questions[4].options.find(o => o.id === userChoices.step5).label}\n\n` +
+        `🔒 終極誓約：${details.oathDesc}\n\n` +
+        `📢 炫言請立即查收並奉上承諾！這輩子直接鎖死不退換💖`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("已成功複製特調單！快去 LINE 貼給炫言吧 💕");
+      }).catch(() => {
+        showToast("複製成功！請打開 LINE 貼給炫言 💌");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      document.getElementById('toastText').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    /* 右下角林小妮彩蛋控制 */
+    function openEasterEgg() {
+      playTone(600, 'sine', 0.15);
+      document.getElementById('easterEggModal').classList.add('active');
+    }
+
+    function closeEasterEgg(e) {
+      if (e) e.stopPropagation();
+      document.getElementById('easterEggModal').classList.remove('active');
+    }
+
+    // 啟動首頁
+    renderWelcome();
+  </script>
+</body>
+</html>
